@@ -43,16 +43,15 @@ while run:
     man1.move(True, events)
     man2.move(True, events)
 
-    man1._draw_to_surface()
-    man2._draw_to_surface()
-
     if check_collision(man1, man2):
         if man1.is_punching:
             man2.health -= 5
-            man2.is_hit = True
+            man2.x += 10
+            print("health good 2:", man2.health)
         if man2.is_punching:
             man1.health -= 5
-            man1.is_hit = True
+            man1.x -= 10
+            print("health good 1:", man1.health)
         man1.x = old_x1
         man2.x = old_x2
 
@@ -64,9 +63,6 @@ while run:
 
     if man2.is_jumping:
         man2.jump(True)
-
-    man1._draw_to_surface()
-    man2._draw_to_surface()
 
     if check_collision(man1, man2):
         man1.changed_y = old_y1
@@ -94,8 +90,6 @@ while run:
         man1.is_punching = False
     if man2.is_punching:
         man2.is_punching = False
-
-    print(man1.health, man2.health)
 
     pygame.display.flip()
     clk.tick(30)
