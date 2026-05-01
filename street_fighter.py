@@ -3,6 +3,7 @@ import os
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from man import Man
+from health import HealthBar
 
 SCREEN_WIDTH = 1400
 SCREEN_HEIGHT = 800
@@ -20,13 +21,23 @@ man2 = Man(1300, 520, (0, 0, 255),
            {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'jump': pygame.K_UP, 'punch': pygame.K_COMMA},
            direction=-1)
 
+health_bar_a = HealthBar((255, 0, 0))
+health_bar_b = HealthBar((0, 0, 255))
+
 def check_collision(a, b):
-    mask_a = pygame.mask.from_surface(a.surface)
-    mask_b = pygame.mask.from_surface(b.surface)
-    pos_a = a.get_blit_pos()
-    pos_b = b.get_blit_pos()
-    offset = (pos_b[0] - pos_a[0], pos_b[1] - pos_a[1])
-    return mask_a.overlap(mask_b, offset) is not None
+    # mask_a = pygame.mask.from_surface(a.surface)
+    # mask_b = pygame.mask.from_surface(b.surface)
+    # pos_a = a.get_blit_pos()
+    # pos_b = b.get_blit_pos()
+    # offset = (pos_b[0] - pos_a[0], pos_b[1] - pos_a[1])
+    # return mask_a.overlap(mask_b, offset) is not None
+    x_a = a.get_blit_pos()[0]
+    y_a = a.get_blit_pos()[1]
+    x_b = b.get_blit_pos()[0]
+    y_b = b.get_blit_pos()[1]
+    overlap_a = 55 if a.is_punching else 45
+    overlap_b = 55 if b.is_punching else 45
+    return not (x_a + overlap_a < x_b - overlap_b)
 
 run = True
 
@@ -43,18 +54,6 @@ while run:
     man1.move(True, events)
     man2.move(True, events)
 
-    if check_collision(man1, man2):
-        if man1.is_punching:
-            man2.health -= 5
-            man2.x += 10
-            print("health good 2:", man2.health)
-        if man2.is_punching:
-            man1.health -= 5
-            man1.x -= 10
-            print("health good 1:", man1.health)
-        man1.x = old_x1
-        man2.x = old_x2
-
     old_y1 = man1.changed_y
     old_y2 = man2.changed_y
 
@@ -65,6 +64,18 @@ while run:
         man2.jump(True)
 
     if check_collision(man1, man2):
+        if man1.is_punching:
+            man2.health -= 5
+            man2.x += 10
+            man2.is_hit = True
+            print("health 2:", man2.health)
+        if man2.is_punching:
+            man1.health -= 5
+            man1.x -= 10
+            man1.is_hit = True
+            print("health 1:", man1.health)
+        man1.x = old_x1
+        man2.x = old_x2
         man1.changed_y = old_y1
         man2.changed_y = old_y2
 
@@ -90,7 +101,7 @@ while run:
         man1.is_punching = False
     if man2.is_punching:
         man2.is_punching = False
-
+    health_bar_a.draw()
     pygame.display.flip()
     clk.tick(30)
 

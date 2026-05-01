@@ -17,27 +17,44 @@ class Man:
         self.count = 0
         self.surface = pygame.Surface((120, 210), pygame.SRCALPHA)
         self.health = 100
+        self.counter = 0
 
     def _draw_to_surface(self):
         self.surface.fill((0, 0, 0, 0))
         d = self.direction
         cx, cy = 60, 30
 
-        pygame.draw.circle(self.surface, self.team, (cx, cy), 30)
         if self.is_jumping:
+            pygame.draw.circle(self.surface, self.team, (cx, cy), 30)
             pygame.draw.line(self.surface, self.team, (cx, cy), (cx, cy+90), width=16)
-            pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+20*d, cy+75), width=10)
-            pygame.draw.line(self.surface, self.team, (cx+20*d, cy+75), (cx+45*d, cy+65), width=10)
-            pygame.draw.line(self.surface, self.team, (cx-3*d, cy+90), (cx+45*d, cy+95), width=10)
-            pygame.draw.line(self.surface, self.team, (cx+45*d, cy+95), (cx+30*d, cy+145), width=10)
+            pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+10*d, cy+65), width=5)
+            pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
+            pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+20*d, cy+66), width=10)
+            pygame.draw.line(self.surface, self.team, (cx+20*d, cy+66), (cx+45*d, cy+48), width=10)
+            pygame.draw.line(self.surface, self.team, (cx, cy+90), (cx+25*d, cy+115), width=16)
+            pygame.draw.line(self.surface, self.team, (cx+25*d, cy+115), (cx+5*d, cy+155), width=16)
         elif self.is_punching:
+            pygame.draw.circle(self.surface, self.team, (cx, cy), 30)
             pygame.draw.line(self.surface, self.team, (cx, cy), (cx, cy+120), width=16)
             pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+10*d, cy+65), width=5)
             pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
             pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+55*d, cy+55), width=10)
             pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx-20*d, cy+200), width=10)
             pygame.draw.line(self.surface, self.team, (cx+3*d, cy+120), (cx+20*d, cy+200), width=10)
+        elif self.is_hit:
+            pygame.draw.circle(self.surface, self.team, (cx-30*d, cy), 30)
+            pygame.draw.line(self.surface, self.team, (cx-30*d, cy), (cx, cy+35), width=16)
+            pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx, cy+120), width=16)
+            pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
+            pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+20*d, cy+66), width=10)
+            pygame.draw.line(self.surface, self.team, (cx+20*d, cy+66), (cx+45*d, cy+48), width=10)
+            pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx-20*d, cy+200), width=10)
+            pygame.draw.line(self.surface, self.team, (cx+3*d, cy+120), (cx+20*d, cy+200), width=10)
+            self.counter += 1
+            self.is_hit = False if self.counter >= 2 else True
+            self.counter = 0 if self.counter >= 2 else self.counter
         else:
+            pygame.draw.circle(self.surface, self.team, (cx, cy), 30)
             pygame.draw.line(self.surface, self.team, (cx, cy), (cx, cy+120), width=16)
             pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+10*d, cy+65), width=5)
             pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
