@@ -98,3 +98,6 @@ class Man:
             self.count += 1
             self.is_jumping = True
             self.v = -27
+        if keys[self.controls['block']] and self.cooldown_block == 0:
+            self.is_blocking = True
+            self.cooldown_block = 30
