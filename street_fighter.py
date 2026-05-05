@@ -64,16 +64,14 @@ while run:
         man2.jump(True)
 
     if check_collision(man1, man2):
-        if man1.is_punching:
-            man2.health -= 5
+        if man1.is_punching and not man2.is_blocking:
+            health_bar_b.health -= 5
             man2.x += 10
             man2.is_hit = True
-            print("health 2:", man2.health)
-        if man2.is_punching:
-            man1.health -= 5
+        if man2.is_punching and not man1.is_blocking:
+            health_bar_a.health -= 5
             man1.x -= 10
             man1.is_hit = True
-            print("health 1:", man1.health)
         man1.x = old_x1
         man2.x = old_x2
         man1.changed_y = old_y1
@@ -103,7 +101,7 @@ while run:
         man2.is_punching = False
     health_bar_a.draw(screen)
     health_bar_b.draw(screen)
-    
+
     pygame.display.flip()
     clk.tick(30)
 

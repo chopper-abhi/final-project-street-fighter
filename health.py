@@ -1,20 +1,22 @@
 import pygame
 
 class HealthBar:
-    def __init__(self, team):
+    def __init__(self, team,y=50,width=600,height=30):
         self.team = team
-        self.surface = pygame.Surface((120, 60), pygame.SRCALPHA)
+        self.x = 50 if team == (255, 0, 0) else 750
+        self.y = y
+        self.width = width
+        self.height = height
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.health = 100
-    def _draw_to_surface(self):
-        self.surface.fill((0, 0, 0, 0))
+    def _draw_to_surface(self, canvas):
         if self.team == (255, 0, 0):
-            pygame.draw.rect(self.surface, (25, 25, 25), ((50, 50), (600, 30)), width=5)
-            pygame.draw.rect(self.surface, self.team, ((55, 55), (590, 20)), width=0)
+            pygame.draw.rect(canvas, (25, 25, 25), self.rect, width=5)
+            pygame.draw.rect(canvas, self.team, (self.x+5, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
         else:
-            pygame.draw.rect(self.surface, (25, 25, 25), ((750, 50), (600, 30)), width=5)
-            pygame.draw.rect(self.surface, self.team, ((755, 55), (590, 20)), width=0)
+            pygame.draw.rect(canvas, (25, 25, 25), self.rect, width=5)
+            pygame.draw.rect(canvas, self.team, (self.x+5+((100-self.health)/100)*590, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
     def draw(self, canvas):
-        self._draw_to_surface()
-        canvas.blit(self.surface, self.get_blit_pos())
+        self._draw_to_surface(canvas)
     def get_blit_pos(self):
         return (50, 50) if self.team == (255, 0, 0) else (750, 50)
