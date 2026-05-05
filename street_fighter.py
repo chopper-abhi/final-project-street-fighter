@@ -101,7 +101,9 @@ while run:
         man1.is_punching = False
     if man2.is_punching:
         man2.is_punching = False
-    health_bar_a.draw()
+    health_bar_a.draw(screen)
+    health_bar_b.draw(screen)
+    
     pygame.display.flip()
     clk.tick(30)
 
