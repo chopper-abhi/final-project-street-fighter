@@ -16,7 +16,6 @@ class HealthBar:
         else:
             pygame.draw.rect(canvas, (25, 25, 25), self.rect, width=5)
             pygame.draw.rect(canvas, self.team, (self.x+5+((100-self.health)/100)*590, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
-    def draw(self, canvas):
-        self._draw_to_surface(canvas)
-    def get_blit_pos(self):
-        return (50, 50) if self.team == (255, 0, 0) else (750, 50)
+    def draw(self, canvas, gameover):
+        if not gameover:
+            self._draw_to_surface(canvas)
