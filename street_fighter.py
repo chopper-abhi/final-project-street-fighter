@@ -44,14 +44,11 @@ while run:
         if e.type == pygame.QUIT:
             run = False
     run = False if (gameover and gameover_counter >= 30**10**10**10**10**10**10**10) else True
-    old_x1, old_y1 = man1.x, man1.changed_y
-    old_x2, old_y2 = man2.x, man2.changed_y
+    old_x1 = man1.x
+    old_x2 = man2.x
 
     man1.move(True, events, gameover)
     man2.move(True, events, gameover)
-
-    old_y1 = man1.changed_y
-    old_y2 = man2.changed_y
 
     if man1.is_jumping:
         man1.jump(True, gameover)
@@ -65,15 +62,19 @@ while run:
             health_bar_b.health -= 5
             man2.x += 10
             man2.is_hit = True
+            if man2.is_jumping:
+                man2.health -= 2
+                health_bar_b.health -= 2
         if man2.is_punching and not man1.is_blocking:
             man1.health -= 5
             health_bar_a.health -= 5
             man1.x -= 10
             man1.is_hit = True
+            if man1.is_jumping:
+                man1.health -= 2
+                health_bar_a.health -= 2
         man1.x = old_x1
         man2.x = old_x2
-        man1.changed_y = old_y1
-        man2.changed_y = old_y2
 
         if man1.v < 0:
             man1.v = 0
@@ -123,6 +124,7 @@ while run:
     
     pygame.display.flip()
     clk.tick(30)
+run = True
 while run:
     events = pygame.event.get()
 
@@ -140,13 +142,13 @@ while run:
         pygame.draw.line(screen, (125, 125, 130), (0, i * 100), (1400, i * 100))
     
     if man1.health <= 0:
-        font = pygame.font.SysFont(None, 74)
+        font = pygame.font.SysFont("Garamond", 74)
         text = font.render("Man 2 Wins!", True, (0, 0, 0))
-        screen.blit(text, (500, 350))
+        screen.blit(text, (520, 350))
     if man2.health <= 0:
-        font = pygame.font.SysFont(None, 74)
+        font = pygame.font.SysFont("Garamond", 74)
         text = font.render("Man 1 Wins!", True, (0, 0, 0))
-        screen.blit(text, (500, 350))
+        screen.blit(text, (520, 350))
     
     pygame.display.flip()
     clk.tick(30)
