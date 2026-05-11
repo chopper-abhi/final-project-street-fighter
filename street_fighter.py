@@ -4,6 +4,7 @@ os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 from man import Man
 from health import HealthBar
+from button import Button
 
 SCREEN_WIDTH = 1400
 SCREEN_HEIGHT = 800
@@ -34,16 +35,77 @@ def check_collision(a, b):
     return not (x_a + overlap_a < x_b - overlap_b)
 
 run = True
-gameover = False
-gameover_counter = 0
-
 while run:
     events = pygame.event.get()
 
     for e in events:
         if e.type == pygame.QUIT:
             run = False
-    run = False if (gameover and gameover_counter >= 30**10**10**10**10**10**10**10) else True
+    screen.fill((200, 200, 200))
+    for i in range(1, 14):
+        pygame.draw.line(screen, (125, 125, 130), (i * 100, 0), (i * 100, 800))
+    for i in range(1, 8):
+        pygame.draw.line(screen, (125, 125, 130), (0, i * 100), (1400, i * 100))
+    title_font = pygame.font.SysFont("Impact", 200)
+    title_text = title_font.render("Street Fighter", True, (50, 5, 0))
+    screen.blit(title_text, (150, 50))
+    play = Button("Start Game", (450, 300), (500, 200), (150, 0, 0), font_size=100)
+    info = Button("Instructions", (500, 550), (400, 100), (150, 150, 255), font_size=75)
+    if play.is_clicked(events):
+        run = False
+    if info.is_clicked(events):
+        info_screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        run_info = True
+        while run_info:
+            events_info = pygame.event.get()
+            for e in events_info:
+                if e.type == pygame.QUIT:
+                    run_info = False
+
+            info_screen.fill((200, 200, 200))
+
+            instructions_font = pygame.font.SysFont("Garamond", 75)
+
+            instructions_text = (
+                "Player 1: A (left), D (right), W (jump), 1 (punch), 2 (block). "
+                "Player 2: Left Arrow (left), Right Arrow (right), Up Arrow (jump), "
+                "Comma (punch), Period (block). Punch: 5 damage, Punch while opponent "
+                "jumping: 7 damage, Block: nullifies punch damage. First player to "
+                "reduce the opponent's health to 0 wins!"
+            )
+            words = instructions_text.split(" ")
+            lines = []
+            current_line = ""
+
+            for word in words:
+                test_line = current_line + word + " "
+                test_surface = instructions_font.render(test_line, True, (0, 0, 0))
+
+                if test_surface.get_width() > 1200:
+                    lines.append(current_line)
+                    current_line = word + " "
+                else:
+                    current_line = test_line
+
+            lines.append(current_line)
+            
+            for i, line in enumerate(lines):
+                text_surface = instructions_font.render(line, True, (0, 0, 0), None)
+                info_screen.blit(text_surface, (100, 200 + i * 90))
+            pygame.display.flip()
+    play.draw(screen)
+    info.draw(screen)
+    pygame.display.flip()
+    clk.tick(30)
+
+run = True
+gameover = False
+while run:
+    events = pygame.event.get()
+
+    for e in events:
+        if e.type == pygame.QUIT:
+            run = False
     old_x1 = man1.x
     old_x2 = man2.x
 
@@ -107,19 +169,8 @@ while run:
     health_bar_a.draw(screen, gameover)
     health_bar_b.draw(screen, gameover)
 
-    gameover_counter += 1 if gameover else 0
-
-    if man1.health <= 0:
+    if man1.health <= 0 or man2.health <= 0:
         run = False
-        font = pygame.font.SysFont(None, 74)
-        text = font.render("Man 2 Wins!", True, (0, 0, 0))
-        screen.blit(text, (500, 350))
-        gameover = True
-    if man2.health <= 0:
-        run = False
-        font = pygame.font.SysFont(None, 74)
-        text = font.render("Man 1 Wins!", True, (0, 0, 0))
-        screen.blit(text, (500, 350))
         gameover = True
     
     pygame.display.flip()
@@ -141,13 +192,18 @@ while run:
     for i in range(1, 7):
         pygame.draw.line(screen, (125, 125, 130), (0, i * 100), (1400, i * 100))
     
+    man1.draw(screen, False)
+    man2.draw(screen, False)
+    health_bar_a.draw(screen, False)
+    health_bar_b.draw(screen, False)
+
     if man1.health <= 0:
         font = pygame.font.SysFont("Garamond", 74)
-        text = font.render("Man 2 Wins!", True, (0, 0, 0))
+        text = font.render("Blue Wins!", True, (0, 0, 255))
         screen.blit(text, (520, 350))
     if man2.health <= 0:
         font = pygame.font.SysFont("Garamond", 74)
-        text = font.render("Man 1 Wins!", True, (0, 0, 0))
+        text = font.render("Red Wins!", True, (255, 0, 0))
         screen.blit(text, (520, 350))
     
     pygame.display.flip()
