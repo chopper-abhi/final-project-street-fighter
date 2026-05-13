@@ -15,11 +15,11 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clk = pygame.time.Clock()
 
 man1 = Man(100, 520, (255, 0, 0),
-           {'left': pygame.K_a, 'right': pygame.K_d, 'jump': pygame.K_w, 'punch': pygame.K_1, 'block': pygame.K_2},
+           {'left': pygame.K_a, 'right': pygame.K_d, 'jump': pygame.K_w, 'punch': pygame.K_1, 'block': pygame.K_2, 'kick': pygame.K_3},
            direction=1)
 
 man2 = Man(1300, 520, (0, 0, 255),
-           {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'jump': pygame.K_UP, 'punch': pygame.K_COMMA, 'block': pygame.K_PERIOD},
+           {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'jump': pygame.K_UP, 'punch': pygame.K_COMMA, 'block': pygame.K_PERIOD, 'kick': pygame.K_SLASH},
            direction=-1)
 
 health_bar_a = HealthBar((255, 0, 0))
@@ -63,35 +63,33 @@ while run:
                     run_info = False
 
             info_screen.fill((200, 200, 200))
-
-            instructions_font = pygame.font.SysFont("Garamond", 75)
-
+            instructions_font = pygame.font.SysFont("Garamond", 50)
             instructions_text = (
                 "Player 1: A (left), D (right), W (jump), 1 (punch), 2 (block). "
                 "Player 2: Left Arrow (left), Right Arrow (right), Up Arrow (jump), "
-                "Comma (punch), Period (block). Punch: 5 damage, Punch while opponent "
-                "jumping: 7 damage, Block: nullifies punch damage. First player to "
-                "reduce the opponent's health to 0 wins!"
-            )
+                "Comma (punch), Period (block). Punch: 2 damage, Punch while opponent "
+                "jumping: 3 damage, Block: nullifies punch damage. Kick: 5 damage. "
+                "Kick breaks through block. First player to reduce the opponent's "
+                "health to 0 wins!")
             words = instructions_text.split(" ")
             lines = []
             current_line = ""
-
             for word in words:
                 test_line = current_line + word + " "
                 test_surface = instructions_font.render(test_line, True, (0, 0, 0))
-
                 if test_surface.get_width() > 1200:
                     lines.append(current_line)
                     current_line = word + " "
                 else:
                     current_line = test_line
-
             lines.append(current_line)
-            
             for i, line in enumerate(lines):
                 text_surface = instructions_font.render(line, True, (0, 0, 0), None)
                 info_screen.blit(text_surface, (100, 200 + i * 90))
+            button_back = Button("Back", (50, 50), (150, 75), (150, 0, 0), font_size=50)
+            button_back.draw(info_screen)
+            if button_back.is_clicked(events_info):
+                run_info = False
             pygame.display.flip()
     play.draw(screen)
     info.draw(screen)
@@ -120,21 +118,35 @@ while run:
 
     if check_collision(man1, man2):
         if man1.is_punching and not man2.is_blocking:
-            man2.health -= 5
-            health_bar_b.health -= 5
+            man2.health -= 2
+            health_bar_b.health -= 2
             man2.x += 10
             man2.is_hit = True
             if man2.is_jumping:
-                man2.health -= 2
-                health_bar_b.health -= 2
+                man2.health -= 1
+                health_bar_b.health -= 1
+            man1.combo = man1.combo + 1 if man1.punch_counter >= 0 and man1.punch_counter < 50 else 0
+            if man1.combo == 0:
+                man1.punch_counter = 0
+            man1.count_punch = False if man1.punch_counter >= 50 else True
+        if man1.is_kicking:
+            man2.health -= 5
+            health_bar_b.health -= 5
         if man2.is_punching and not man1.is_blocking:
-            man1.health -= 5
-            health_bar_a.health -= 5
+            man1.health -= 2
+            health_bar_a.health -= 2
             man1.x -= 10
             man1.is_hit = True
             if man1.is_jumping:
-                man1.health -= 2
-                health_bar_a.health -= 2
+                man1.health -= 1
+                health_bar_a.health -= 1
+            man2.combo = man2.combo + 1 if man2.punch_counter >= 0 and man2.punch_counter < 50 else 0
+            if man2.combo == 0:
+                man2.punch_counter = 0
+            man2.count_punch = False if man2.punch_counter >= 50 else True
+        if man2.is_kicking:
+            man1.health -= 5
+            health_bar_a.health -= 5
         man1.x = old_x1
         man2.x = old_x2
 
@@ -168,6 +180,18 @@ while run:
         man2.is_blocking = False
     health_bar_a.draw(screen, gameover)
     health_bar_b.draw(screen, gameover)
+
+    man1.punch_counter += 1 if man1.count_punch else 0
+    man2.punch_counter += 1 if man2.count_punch else 0
+
+    if man1.combo > 0:
+        font = pygame.font.SysFont("Garamond", 30)
+        text = font.render(f"Combo x{man1.combo}", True, (0, 0, 255))
+        screen.blit(text, (50, 250))
+    if man2.combo > 0:
+        font = pygame.font.SysFont("Garamond", 30)
+        text = font.render(f"Combo x{man2.combo}", True, (255, 0, 0))
+        screen.blit(text, (1250, 250))
 
     if man1.health <= 0 or man2.health <= 0:
         run = False
