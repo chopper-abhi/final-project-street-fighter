@@ -30,8 +30,8 @@ def check_collision(a, b):
     y_a = a.get_blit_pos()[1]
     x_b = b.get_blit_pos()[0]
     y_b = b.get_blit_pos()[1]
-    overlap_a = 55 if a.is_punching else 45
-    overlap_b = 55 if b.is_punching else 45
+    overlap_a = 55 if (a.is_punching or a.is_kicking) else 45
+    overlap_b = 55 if (b.is_punching or b.is_kicking) else 45
     return not (x_a + overlap_a < x_b - overlap_b)
 
 run = True
@@ -130,8 +130,8 @@ while run:
                 man1.punch_counter = 0
             man1.count_punch = False if man1.punch_counter >= 50 else True
         if man1.is_kicking:
-            man2.health -= 5
-            health_bar_b.health -= 5
+            man2.health -= 7 if man1.kick_counter >= 2 else 0
+            health_bar_b.health -= 7 if man1.kick_counter >= 2 else 0
         if man2.is_punching and not man1.is_blocking:
             man1.health -= 2
             health_bar_a.health -= 2
@@ -145,8 +145,8 @@ while run:
                 man2.punch_counter = 0
             man2.count_punch = False if man2.punch_counter >= 50 else True
         if man2.is_kicking:
-            man1.health -= 5
-            health_bar_a.health -= 5
+            man1.health -= 7 if man2.kick_counter >= 2 else 0
+            health_bar_a.health -= 7 if man2.kick_counter >= 2 else 0
         man1.x = old_x1
         man2.x = old_x2
 
@@ -155,6 +155,7 @@ while run:
 
         if man2.v < 0:
             man2.v = 0
+        print(man1.health, man2.health)
 
     screen.fill((200, 200, 200))
     pygame.draw.rect(screen, (100, 0, 0), [0, 700, 1400, 100])
@@ -186,11 +187,11 @@ while run:
 
     if man1.combo > 0:
         font = pygame.font.SysFont("Garamond", 30)
-        text = font.render(f"Combo x{man1.combo}", True, (0, 0, 255))
+        text = font.render(f"Combo x{man1.combo}", True, (255, 0, 0))
         screen.blit(text, (50, 250))
     if man2.combo > 0:
         font = pygame.font.SysFont("Garamond", 30)
-        text = font.render(f"Combo x{man2.combo}", True, (255, 0, 0))
+        text = font.render(f"Combo x{man2.combo}", True, (0, 0, 255))
         screen.blit(text, (1250, 250))
 
     if man1.health <= 0 or man2.health <= 0:
@@ -207,7 +208,7 @@ while run:
         if e.type == pygame.QUIT:
             run = False
     
-    screen.fill((200, 200, 200))
+    screen.fill((20, 20, 20))
     pygame.draw.rect(screen, (100, 0, 0), [0, 700, 1400, 100])
 
     for i in range(1, 14):
@@ -215,9 +216,6 @@ while run:
 
     for i in range(1, 7):
         pygame.draw.line(screen, (125, 125, 130), (0, i * 100), (1400, i * 100))
-    
-    man1.draw(screen, False)
-    man2.draw(screen, False)
     health_bar_a.draw(screen, False)
     health_bar_b.draw(screen, False)
 

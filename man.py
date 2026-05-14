@@ -47,14 +47,15 @@ class Man:
             pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
             pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+20*d, cy+66), width=10)
             pygame.draw.line(self.surface, self.team, (cx+20*d, cy+66), (cx+45*d, cy+48), width=10)
-            if self.kick_counter <= 3:
-                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+108*d, cy+110), width=10)
-                pygame.draw.line(self.surface, self.team, (cx+108*d, cy+110), (cx+90*d, cy+140), width=10)
+            if self.kick_counter <= 1:
+                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+28*d, cy+110), width=10)
+                pygame.draw.line(self.surface, self.team, (cx+28*d, cy+110), (cx+25*d, cy+140), width=10)
                 self.kick_counter += 1
             else:
-                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+253*d, cy+100), width=10)
+                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+53*d, cy+100), width=10)
                 self.kick_counter += 1
-                self.is_kicking = False if self.kick_counter >= 7 else self.is_kicking
+                self.is_kicking = False if self.kick_counter >= 2 else self.is_kicking
+                self.kick_counter = 0 if self.kick_counter >= 2 else self.kick_counter
             pygame.draw.line(self.surface, self.team, (cx+3*d, cy+120), (cx+20*d, cy+200), width=10)
 
         elif self.is_hit:
@@ -118,10 +119,10 @@ class Man:
                         self.is_blocking = True
                         self.initial_block = False
                         self.counter_block = 0
-                    if event.key == self.controls['kick'] and condition_move and self.combo >= 5:
+                    if event.key == self.controls['kick'] and condition_move and self.combo >= 3:
                         self.is_kicking = True
                         self.moving = True
-                        self.combo -= 5
+                        self.combo -= 3
             keys = pygame.key.get_pressed()
             if keys[self.controls['left']] and condition_move and self.x > 30:
                 self.x -= 5

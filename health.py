@@ -15,7 +15,7 @@ class HealthBar:
             pygame.draw.rect(canvas, self.team, (self.x+5, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
         else:
             pygame.draw.rect(canvas, (25, 25, 25), self.rect, width=5)
-            pygame.draw.rect(canvas, self.team, (self.x+5+((100-self.health)/100)*590, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
+            pygame.draw.rect(canvas, self.team, (self.x+6+((100-self.health)/100)*590, self.y+5, (self.width-10)*self.health/100, self.height-10), width=0)
     def draw(self, canvas, gameover):
         if not gameover:
             self._draw_to_surface(canvas)
