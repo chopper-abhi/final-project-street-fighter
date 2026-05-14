@@ -25,22 +25,14 @@ class Man:
         self.combo = 0
         self.count_punch = False
         self.is_kicking = False
+        self.kick_counter = 0
 
     def _draw_to_surface(self):
         self.surface.fill((0, 0, 0, 0))
         d = self.direction
         cx, cy = 60, 30
 
-        if self.is_jumping:
-            pygame.draw.circle(self.surface, self.team, (cx, cy), 25)
-            pygame.draw.line(self.surface, self.team, (cx, cy), (cx, cy+90), width=16)
-            pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+10*d, cy+65), width=5)
-            pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
-            pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+20*d, cy+66), width=10)
-            pygame.draw.line(self.surface, self.team, (cx+20*d, cy+66), (cx+45*d, cy+48), width=10)
-            pygame.draw.line(self.surface, self.team, (cx, cy+90), (cx+25*d, cy+115), width=16)
-            pygame.draw.line(self.surface, self.team, (cx+25*d, cy+115), (cx+5*d, cy+155), width=16)
-        elif self.is_punching:
+        if self.is_punching:
             pygame.draw.circle(self.surface, self.team, (cx, cy), 25)
             pygame.draw.line(self.surface, self.team, (cx, cy), (cx, cy+120), width=16)
             pygame.draw.line(self.surface, self.team, (cx, cy+35), (cx+10*d, cy+65), width=5)
@@ -55,8 +47,16 @@ class Man:
             pygame.draw.line(self.surface, self.team, (cx+10*d, cy+65), (cx+35*d, cy+40), width=10)
             pygame.draw.line(self.surface, self.team, (cx, cy+55), (cx+20*d, cy+66), width=10)
             pygame.draw.line(self.surface, self.team, (cx+20*d, cy+66), (cx+45*d, cy+48), width=10)
-            pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+55*d, cy+100), width=10)
+            if self.kick_counter <= 3:
+                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+108*d, cy+110), width=10)
+                pygame.draw.line(self.surface, self.team, (cx+108*d, cy+110), (cx+90*d, cy+140), width=10)
+                self.kick_counter += 1
+            else:
+                pygame.draw.line(self.surface, self.team, (cx-3*d, cy+120), (cx+253*d, cy+100), width=10)
+                self.kick_counter += 1
+                self.is_kicking = False if self.kick_counter >= 7 else self.is_kicking
             pygame.draw.line(self.surface, self.team, (cx+3*d, cy+120), (cx+20*d, cy+200), width=10)
+
         elif self.is_hit:
             pygame.draw.circle(self.surface, self.team, (cx-30*d, cy), 25)
             pygame.draw.line(self.surface, self.team, (cx-30*d, cy), (cx, cy+35), width=16)

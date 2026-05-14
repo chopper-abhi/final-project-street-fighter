@@ -107,14 +107,14 @@ while run:
     old_x1 = man1.x
     old_x2 = man2.x
 
-    man1.move(True, events, gameover)
-    man2.move(True, events, gameover)
-
     if man1.is_jumping:
         man1.jump(True, gameover)
 
     if man2.is_jumping:
         man2.jump(True, gameover)
+
+    man1.move(True, events, gameover)
+    man2.move(True, events, gameover)
 
     if check_collision(man1, man2):
         if man1.is_punching and not man2.is_blocking:
