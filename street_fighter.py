@@ -63,13 +63,14 @@ while run:
                     run_info = False
 
             info_screen.fill((200, 200, 200))
-            instructions_font = pygame.font.SysFont("Garamond", 50)
+            instructions_font = pygame.font.SysFont("Garamond", 40)
             instructions_text = (
                 "Player 1: A (left), D (right), W (jump), 1 (punch), 2 (block). "
                 "Player 2: Left Arrow (left), Right Arrow (right), Up Arrow (jump), "
                 "Comma (punch), Period (block). Punch: 2 damage, Punch while opponent "
-                "jumping: 3 damage, Block: nullifies punch damage. Kick: 5 damage. "
-                "Kick breaks through block. First player to reduce the opponent's "
+                "jumping: 3 damage, Block: nullifies punch damage. Kick: 7 damage. "
+                "Kick breaks through block. Kick requires a 5x combo to be effective. "
+                "First player to reduce the opponent's "
                 "health to 0 wins!")
             words = instructions_text.split(" ")
             lines = []
